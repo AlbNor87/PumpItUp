@@ -1,5 +1,5 @@
 
-# Pump The Trump:
+# Pump The Trump
 <img src="https://media.giphy.com/media/xTiTnHXbRoaZ1B1Mo8/giphy.gif" alt="Trump" width="100%">
 
 ## Assignment:
