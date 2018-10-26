@@ -19,6 +19,8 @@ boolean isRunning = true;
 boolean win = false;
 boolean lose = false;
 float deflationRateFloat = 0;
+int gameState = 2;
+float realValue;
 
 void setup(){
   //Basics
@@ -28,7 +30,6 @@ void setup(){
   //Arduino communication
   myPort = new Serial(this, Serial.list()[1], 115200);
   myPort.bufferUntil(lineFeed);
-  //println(Serial.list());
 
 
   //Define images
@@ -38,7 +39,6 @@ void setup(){
   
   winImg=loadImage("win.gif");
   loseImg=loadImage("lose.gif");
-  
   
   //Create the mask
   mask=createGraphics(diameter, diameter);//draw the mask object
@@ -52,13 +52,21 @@ void setup(){
 }
 
 void draw() {
-  background (#222222);
+  background (realValue);
   image(img, 500, 500, diameter + vobbleValue, diameter + vobbleValue);
   
+  //Show the start screen
+  if (gameState == 1) {
+    
   
-if(isRunning){
-    println("win = " + win);
-    println("lose = " + lose);
+  }
+  
+  //Show the in-game screen
+  if (gameState == 2) {
+    
+    if(isRunning){
+    //println("win = " + win);
+    //println("lose = " + lose);
   
     float deflationRateFloat = diameter/100;
     int deflationRateInt = (int)deflationRateFloat;
@@ -66,7 +74,7 @@ if(isRunning){
   if(diameter > 0){
     //diameter = diameter - deflationRate;
     //diameter = diameter - deflationRateInt;
-    diameter--;
+    diameter-=5;
    
     if(vobbleValue >= 10) {
      vobbleIncrease = false;
@@ -80,9 +88,9 @@ if(isRunning){
     } else {
      vobbleValue-=2;
     }
-    println("DeflationFloat rate = " + deflationRateFloat + "%");
-    println("DeflationInt rate = " + deflationRateInt + "%");
-    println("Diameter = " + diameter);
+    //println("DeflationFloat rate = " + deflationRateFloat + "%");
+    //println("DeflationInt rate = " + deflationRateInt + "%");
+    //println("Diameter = " + diameter);
    
     delay(100);
     
@@ -108,6 +116,8 @@ if(isRunning){
   if(win){
     image(winImg, 600, 450, 1200, 900);
   }
+  
+  }
 
 
 }
@@ -124,15 +134,11 @@ void keyPressed(  ) {
 void serialEvent(Serial port){
  inString = myPort.readStringUntil(lineFeed);
  if(inString != null) {
- println(inString);
- 
- if(inString == "On") {
-    println("funkar");
- state = true;
- } else {
-   state = false;
- }
- 
+   inString = inString.trim();
+   int value = int(inString);
+   realValue = map(value,810,1023,0,20);
+   diameter += realValue;
+   println(realValue);
  
  }
 }
