@@ -27,11 +27,14 @@ PFont america;
 PFont pixel;
 PImage[] win = new PImage[75];
 PImage[] lose = new PImage[10];
+<<<<<<< HEAD
 int difficulty = 1;
 float gameDif = 15;
 boolean playMusicOnce = true;
 float backgroundColor = 0;
 
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
 
 void setup(){
   //Basics
@@ -153,7 +156,12 @@ void setup(){
 }
 
 void draw() {
+<<<<<<< HEAD
   background(backgroundColor, 0, 0);
+=======
+  background (realValue);
+  
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
   //Show the start screen
   if (gameState == 0) {
     
@@ -171,7 +179,11 @@ void draw() {
    float settingsX = 510;
    float settingsY = 515;
    float quitX = 510;
+<<<<<<< HEAD
    float quitY = 590;
+=======
+   float quitY = 510;
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
    float w = 175;
    float h = 50;
    //rect(startX,startY,w,h);
@@ -186,15 +198,22 @@ void draw() {
      //do stuff
       } else if(mouseX > settingsX && mouseX < settingsX+w && mouseY > settingsY && mouseY < settingsY+h){
       gameState = 1;
+<<<<<<< HEAD
       } else if(mouseX > quitX && mouseX < quitX+w && mouseY > quitY && mouseY < quitY+h){
       exit();
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
       }
       
     } 
     
   }
   
+<<<<<<< HEAD
   //Show the settings screen
+=======
+  //Show the start screen
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
   if (gameState == 1) {
     
    textFont(america);
@@ -202,6 +221,7 @@ void draw() {
    
    textFont(pixel);
    
+<<<<<<< HEAD
    if (difficulty == 1) {
         text("->", 500, 450);
         gameDif = 15;
@@ -215,6 +235,8 @@ void draw() {
         gameDif = 8;
    }
    
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
    text("Easy", 600, 450 );
    text("Medium", 600, 525 );
    text("Hard", 600, 600 );
@@ -225,20 +247,29 @@ void draw() {
     float easyY = 440;
     float mediumX = 510;
     float mediumY = 515;
+<<<<<<< HEAD
     float hardX = 520;
     float hardY = 590;
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
     float goBackX = 510;
     float goBackY = 685;
     float w = 175;
     float h = 50;
     //rect(easyX,easyY,w,h);
+<<<<<<< HEAD
     //rect(goBackX,goBackY,w,h);
     //rect(mediumX,mediumY,w,h);
     //rect(hardX, hardY, w, h);
+=======
+    rect(goBackX,goBackY,w,h);
+    //rect(mediumX,mediumY,w,h);
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
 
     if(mousePressed){
     
     if(mouseX>easyX && mouseX <easyX+w && mouseY>easyY && mouseY <easyY+h){
+<<<<<<< HEAD
         difficulty = 1;
      //do stuff
       } else if(mouseX>mediumX && mouseX <mediumX+w && mouseY>mediumY && mouseY <mediumY+h){
@@ -250,16 +281,30 @@ void draw() {
         gameState = 0;
       } 
     } 
+=======
+     gameState = 2; 
+     println("The mouse is pressed and over the button");
+     fill(0);
+     //do stuff
+      } else if(mouseX>goBackX && mouseX <goBackX+w && mouseY>goBackY && mouseY <goBackY+h){
+      gameState = 0;
+      }
+    } 
+    
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
   }
   
   //Show the in-game screen
   if (gameState == 2) {
+<<<<<<< HEAD
     if(playMusicOnce){
          playMusic();
          playMusicOnce = false;
     }
     backgroundColor = map(diameter,10,900,0, 255);
 
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
     image(img, 500, 500, diameter + vobbleValue, diameter + vobbleValue);
     if(isRunning){
     //println("win = " + win);
@@ -315,7 +360,10 @@ void draw() {
     if(winCheck){
       //image(winImg, 600, 450, 1200, 900)
       image( win[frameCount%75], 600, 450, 1200, 900);
+<<<<<<< HEAD
       stopMusic();
+=======
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
     }
   
   }
@@ -337,7 +385,11 @@ void serialEvent(Serial port){
  if(inString != null) {
    inString = inString.trim();
    int value = int(inString);
+<<<<<<< HEAD
    realValue = map(value,810,1023,0, gameDif);
+=======
+   realValue = map(value,810,1023,0, 9);
+>>>>>>> 6322856c627d6a9e0dd86cedfec0e4a19807ef23
    diameter += realValue;
    println(value);
  
