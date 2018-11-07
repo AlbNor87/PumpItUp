@@ -1,7 +1,10 @@
 import processing.serial.*;
 import processing.sound.*;
 
-SoundFile file;
+SoundFile playInGame;
+SoundFile playMenu;
+SoundFile playLose;
+SoundFile playWin;
 Serial myPort;
 String val;
 int lineFeed = 10;
@@ -41,6 +44,11 @@ void setup(){
   america = createFont("AMERICA.TTF", 100);
   pixel = createFont("pixel.ttf", 75);
   textAlign(CENTER, CENTER);
+ 
+  playInGame = new SoundFile(this, "pumpitup.mp3");
+  playMenu = new SoundFile(this, "menu.mp3");
+  playLose = new SoundFile(this, "lose.mp3");
+  playWin = new SoundFile(this, "win.mp3");
  
   //Arduino communication
   myPort = new Serial(this, Serial.list()[1], 115200);
@@ -147,7 +155,7 @@ void setup(){
   mask.smooth();//this really does nothing, i wish it did
   mask.background(0);//background color to target
   mask.fill(255);
-  mask.ellipse(diameter/2, diameter/2 , 200, 200);
+  mask.ellipse(diameter/2, diameter/2 , 280, 280);
   mask.endDraw();
   img.mask(mask);
 }
@@ -156,7 +164,10 @@ void draw() {
   background(backgroundColor, 0, 0);
   //Show the start screen
   if (gameState == 0) {
-    
+     if(playMusicOnce){
+         playMusic(playMenu);
+         playMusicOnce = false;
+    }
    textFont(america);
    text("Pump The Trump", 600, 300 );
    
@@ -180,6 +191,7 @@ void draw() {
    
    if(mousePressed){ 
     if(mouseX > startX && mouseX < startX+w && mouseY > startY && mouseY < startY+h){
+     playMusicOnce = true;
      gameState = 2; 
      println("The mouse is pressed and over the button");
      fill(0);
@@ -196,7 +208,7 @@ void draw() {
   
   //Show the settings screen
   if (gameState == 1) {
-    
+   
    textFont(america);
    text("Pump The Trump", 600, 300 );
    
@@ -254,8 +266,9 @@ void draw() {
   
   //Show the in-game screen
   if (gameState == 2) {
+    stopMusic(playMenu);
     if(playMusicOnce){
-         playMusic();
+         playMusic(playInGame);
          playMusicOnce = false;
     }
     backgroundColor = map(diameter,10,900,0, 255);
@@ -300,36 +313,42 @@ void draw() {
       
       if(diameter < fail) {
         isRunning = false;
-        loseCheck = true;  
+        loseCheck = true; 
+        playMusicOnce = true;
       }
   
   
     }
-    int backX = 200;
-    int backY = 200;
-    int backW = 500;
-    int backH = 100;
-    
-    int replayX = 320;
-    int replayY = 300;
-    int replayW = 220;
-    int replayH = 90;
+
     
     if(loseCheck){
+ 
+      stopMusic(playInGame);
+        if(playMusicOnce){
+         playMusic(playLose);
+         playMusicOnce = false;
+    }
       //image(loseImg, 600, 450, 1200, 900);
       image( lose[frameCount%10], 600, 450, 1200, 900 );
-      //rect(backX,backY,backW,backH);
-      // rect(replayX, replayY, replayW, replayH);
-      textFont(pixel);
-      text("BACK TO MENU", 450, 250);
-      text("REPLAY", 450, 350);
+      int backX = 100;
+      int backY = 700;
+      int backW = 380;
+      int backH = 70;
+      
+      int replayX = 200;
+      int replayY = 620;
+      int replayW = 220;
+      int replayH = 70;
       fill(255, 255, 255);
       textFont(america);
       text("You lose", 600, 420 );
+      textFont(pixel);
+      text("REPLAY", 300, 650);
+      text("BACK TO MENU", 300, 725);
 
       if(mousePressed){
         if(mouseX>backX && mouseX <backX+backW && mouseY>backY && mouseY <backY+backH){
-          loseCheck = false;
+          restart();
           gameState = 0;
         } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
            restart();
@@ -340,12 +359,41 @@ void draw() {
     }
     
     if(winCheck){
+        stopMusic(playInGame);
+        if(playMusicOnce){
+         playMusic(playWin);
+         playMusicOnce = false;
+    }
       //image(winImg, 600, 450, 1200, 900)
       image( win[frameCount%75], 600, 450, 1200, 900);
       fill(255, 255, 255);
       textFont(america);
       text("You win", 575, 420 );
-      stopMusic();
+      int backX = 400;
+      int backY = 600;
+      int backW = 380;
+      int backH = 70;
+      int replayX = 475;
+      int replayY = 525;
+      int replayW = 220;
+      int replayH = 70;
+      //rect(backX,backY,backW,backH);
+      //rect(replayX, replayY, replayW, replayH);
+      textFont(pixel);
+      text("REPLAY", 600, 550);
+      text("BACK TO MENU", 600, 625);
+      if(mousePressed){
+        if(mouseX>backX && mouseX <backX+backW && mouseY>backY && mouseY <backY+backH){
+          loseCheck = false;
+          gameState = 0;
+        } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
+           restart();
+           loseCheck = false;
+           gameState = 2;
+        }
+      }
+
+      stopMusic(playInGame);
     }
   
   }
@@ -374,13 +422,12 @@ void serialEvent(Serial port){
  }
 }
 
-void playMusic(){
-    file = new SoundFile(this, "pumpitup.mp3");
-    file.play();
+void playMusic(SoundFile startFile){
+    startFile.play();
 }
 
-void stopMusic(){
-  file.stop();
+void stopMusic(SoundFile stopFile){
+   stopFile.stop();
 }
 
 void restart(){
@@ -388,4 +435,7 @@ void restart(){
    goal = 900;
    fail = 10;
    isRunning = true;
+   playMusicOnce = true;
+   loseCheck = false;
+   winCheck = false;
 }
