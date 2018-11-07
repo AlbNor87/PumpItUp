@@ -39,7 +39,6 @@ float backgroundColor = 0;
 void setup(){
   //Basics
   size (1200, 900);
-  background (#222222);
 
   america = createFont("AMERICA.TTF", 100);
   pixel = createFont("pixel.ttf", 75);
@@ -164,6 +163,7 @@ void draw() {
   background(backgroundColor, 0, 0);
   //Show the start screen
   if (gameState == 0) {
+    background(0);
      if(playMusicOnce){
          playMusic(playMenu);
          playMusicOnce = false;
@@ -208,6 +208,7 @@ void draw() {
   
   //Show the settings screen
   if (gameState == 1) {
+    background(0);
    
    textFont(america);
    text("Pump The Trump", 600, 300 );
@@ -267,14 +268,15 @@ void draw() {
   //Show the in-game screen
   if (gameState == 2) {
     stopMusic(playMenu);
-    if(playMusicOnce){
-         playMusic(playInGame);
-         playMusicOnce = false;
-    }
+  
     backgroundColor = map(diameter,10,900,0, 255);
 
     image(img, 600, 450, diameter + vobbleValue, diameter + vobbleValue);
     if(isRunning){
+        if(playMusicOnce){
+         playMusic(playInGame);
+         playMusicOnce = false;
+    }
     //println("win = " + win);
     //println("lose = " + lose);
   
@@ -309,6 +311,8 @@ void draw() {
       if(diameter > goal) {
         isRunning = false;
         winCheck = true;
+        playMusicOnce = true;
+
       }
       
       if(diameter < fail) {
@@ -322,7 +326,6 @@ void draw() {
 
     
     if(loseCheck){
- 
       stopMusic(playInGame);
         if(playMusicOnce){
          playMusic(playLose);
@@ -384,12 +387,17 @@ void draw() {
       text("BACK TO MENU", 600, 625);
       if(mousePressed){
         if(mouseX>backX && mouseX <backX+backW && mouseY>backY && mouseY <backY+backH){
+          stopMusic(playWin);
           loseCheck = false;
           gameState = 0;
+          restart();
         } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
            restart();
+           stopMusic(playWin);
+           
            loseCheck = false;
            gameState = 2;
+           restart();
         }
       }
 
@@ -438,4 +446,6 @@ void restart(){
    playMusicOnce = true;
    loseCheck = false;
    winCheck = false;
+  background(0, 0, 0);
+   
 }
