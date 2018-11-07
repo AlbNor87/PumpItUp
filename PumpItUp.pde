@@ -332,6 +332,7 @@ void draw() {
           loseCheck = false;
           gameState = 0;
         } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
+           restart();
            loseCheck = false;
            gameState = 2;
         }
@@ -380,4 +381,11 @@ void playMusic(){
 
 void stopMusic(){
   file.stop();
+}
+
+void restart(){
+   diameter = 300;
+   goal = 900;
+   fail = 10;
+   isRunning = true;
 }
