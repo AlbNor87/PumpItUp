@@ -1,10 +1,5 @@
 import processing.serial.*;
-import processing.sound.*;
 
-SoundFile playInGame;
-SoundFile playMenu;
-SoundFile playLose;
-SoundFile playWin;
 Serial myPort;
 String val;
 int lineFeed = 10;
@@ -15,7 +10,7 @@ PImage img;
 PImage winImg;
 PImage loseImg;
 PGraphics mask;
-int diameter = 300;
+int diameter = 600;
 int goal = 900;
 int fail = 10;
 int vobbleValue = 0;
@@ -30,24 +25,16 @@ PFont america;
 PFont pixel;
 PImage[] win = new PImage[75];
 PImage[] lose = new PImage[10];
-int difficulty = 1;
-float gameDif = 15;
-boolean playMusicOnce = true;
 float backgroundColor = 0;
-
 
 void setup(){
   //Basics
   size (1200, 900);
+  background (#222222);
 
   america = createFont("AMERICA.TTF", 100);
   pixel = createFont("pixel.ttf", 75);
   textAlign(CENTER, CENTER);
- 
-  playInGame = new SoundFile(this, "pumpitup.mp3");
-  playMenu = new SoundFile(this, "menu.mp3");
-  playLose = new SoundFile(this, "lose.mp3");
-  playWin = new SoundFile(this, "win.mp3");
  
   //Arduino communication
   myPort = new Serial(this, Serial.list()[1], 115200);
@@ -154,26 +141,24 @@ void setup(){
   mask.smooth();//this really does nothing, i wish it did
   mask.background(0);//background color to target
   mask.fill(255);
-  mask.ellipse(diameter/2, diameter/2 , diameter, diameter);
-  //mask.ellipse(diameter/2, diameter/2 , 280, 280);
+  mask.ellipse(diameter/2, diameter/2 , 540, 540);
   mask.endDraw();
   img.mask(mask);
 }
 
 void draw() {
+
   background(backgroundColor, 0, 0);
+  
+  
+  
+  //background(realValue);
+  
   //Show the start screen
   if (gameState == 0) {
-    background(0);
-     if(playMusicOnce){
-         playMusic(playMenu);
-         playMusicOnce = false;
-    }
+    
    textFont(america);
    text("Pump The Trump", 600, 300 );
-   
-   textFont(pixel);
-   text("To Dump The Trump You Gotta", 600, 175 );
    
    textFont(pixel);
    
@@ -186,7 +171,7 @@ void draw() {
    float settingsX = 510;
    float settingsY = 515;
    float quitX = 510;
-   float quitY = 590;
+   float quitY = 510;
    float w = 175;
    float h = 50;
    //rect(startX,startY,w,h);
@@ -195,42 +180,25 @@ void draw() {
    
    if(mousePressed){ 
     if(mouseX > startX && mouseX < startX+w && mouseY > startY && mouseY < startY+h){
-     playMusicOnce = true;
      gameState = 2; 
      println("The mouse is pressed and over the button");
      fill(0);
      //do stuff
       } else if(mouseX > settingsX && mouseX < settingsX+w && mouseY > settingsY && mouseY < settingsY+h){
       gameState = 1;
-      } else if(mouseX > quitX && mouseX < quitX+w && mouseY > quitY && mouseY < quitY+h){
-      exit();
       }
       
     } 
     
   }
   
-  //Show the settings screen
+  //Show the start screen
   if (gameState == 1) {
-    background(0);
-   
+    
    textFont(america);
    text("Pump The Trump", 600, 300 );
    
    textFont(pixel);
-   
-   if (difficulty == 1) {
-        text("->", 500, 450);
-        gameDif = 15;
-   }
-   if (difficulty == 2) {
-        text("->", 480, 525);
-        gameDif = 10;
-   }
-   if (difficulty == 3) {
-        text("->", 500, 600);
-        gameDif = 8;
-   }
    
    text("Easy", 600, 450 );
    text("Medium", 600, 525 );
@@ -242,45 +210,33 @@ void draw() {
     float easyY = 440;
     float mediumX = 510;
     float mediumY = 515;
-    float hardX = 520;
-    float hardY = 590;
     float goBackX = 510;
     float goBackY = 685;
     float w = 175;
     float h = 50;
     //rect(easyX,easyY,w,h);
-    //rect(goBackX,goBackY,w,h);
+    rect(goBackX,goBackY,w,h);
     //rect(mediumX,mediumY,w,h);
-    //rect(hardX, hardY, w, h);
 
     if(mousePressed){
     
     if(mouseX>easyX && mouseX <easyX+w && mouseY>easyY && mouseY <easyY+h){
-        difficulty = 1;
+     gameState = 2; 
+     println("The mouse is pressed and over the button");
+     fill(0);
      //do stuff
-      } else if(mouseX>mediumX && mouseX <mediumX+w && mouseY>mediumY && mouseY <mediumY+h){
-        difficulty = 2;
-        println("medium");
-      } else if(mouseX>hardX && mouseX <hardX+w && mouseY>hardY && mouseY <hardY+h){
-        difficulty = 3;
-      } else if (mouseX>goBackX && mouseX <goBackX+w && mouseY>goBackY && mouseY <goBackY+h){
-        gameState = 0;
-      } 
+      } else if(mouseX>goBackX && mouseX <goBackX+w && mouseY>goBackY && mouseY <goBackY+h){
+      gameState = 0;
+      }
     } 
+    
   }
   
   //Show the in-game screen
   if (gameState == 2) {
-    stopMusic(playMenu);
-  
     backgroundColor = map(diameter,10,900,0, 255);
-
-    image(img, 600, 450, diameter + vobbleValue, diameter + vobbleValue);
+    image(img, 500, 500, diameter + vobbleValue, diameter + vobbleValue);
     if(isRunning){
-        if(playMusicOnce){
-         playMusic(playInGame);
-         playMusicOnce = false;
-    }
     //println("win = " + win);
     //println("lose = " + lose);
   
@@ -312,100 +268,34 @@ void draw() {
     
       }
       
-      if(diameter > goal) {
+      if(diameter > goal) {  
         isRunning = false;
         winCheck = true;
-        playMusicOnce = true;
-
       }
       
       if(diameter < fail) {
         isRunning = false;
-        loseCheck = true; 
-        playMusicOnce = true;
+        loseCheck = true;  
       }
   
   
     }
 
-    
     if(loseCheck){
-      stopMusic(playInGame);
-        if(playMusicOnce){
-         playMusic(playLose);
-         playMusicOnce = false;
-    }
       //image(loseImg, 600, 450, 1200, 900);
       image( lose[frameCount%10], 600, 450, 1200, 900 );
-      int backX = 100;
-      int backY = 700;
-      int backW = 380;
-      int backH = 70;
-      
-      int replayX = 200;
-      int replayY = 620;
-      int replayW = 220;
-      int replayH = 70;
       fill(255, 255, 255);
       textFont(america);
       text("You lose", 600, 420 );
-      textFont(pixel);
-      text("REPLAY", 300, 650);
-      text("BACK TO MENU", 300, 725);
-
-      if(mousePressed){
-        if(mouseX>backX && mouseX <backX+backW && mouseY>backY && mouseY <backY+backH){
-          restart();
-          gameState = 0;
-        } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
-           restart();
-           loseCheck = false;
-           gameState = 2;
-        }
-      }
     }
     
     if(winCheck){
-        stopMusic(playInGame);
-        if(playMusicOnce){
-         playMusic(playWin);
-         playMusicOnce = false;
-    }
+      
       //image(winImg, 600, 450, 1200, 900)
       image( win[frameCount%75], 600, 450, 1200, 900);
       fill(255, 255, 255);
       textFont(america);
       text("You win", 575, 420 );
-      int backX = 400;
-      int backY = 600;
-      int backW = 380;
-      int backH = 70;
-      int replayX = 475;
-      int replayY = 525;
-      int replayW = 220;
-      int replayH = 70;
-      //rect(backX,backY,backW,backH);
-      //rect(replayX, replayY, replayW, replayH);
-      textFont(pixel);
-      text("REPLAY", 600, 550);
-      text("BACK TO MENU", 600, 625);
-      if(mousePressed){
-        if(mouseX>backX && mouseX <backX+backW && mouseY>backY && mouseY <backY+backH){
-          stopMusic(playWin);
-          loseCheck = false;
-          gameState = 0;
-          restart();
-        } else if (mouseX>replayX && mouseX <replayX+replayW && mouseY>replayY && mouseY <replayY+replayH){
-           restart();
-           stopMusic(playWin);
-           
-           loseCheck = false;
-           gameState = 2;
-           restart();
-        }
-      }
-
-      stopMusic(playInGame);
     }
   
   }
@@ -427,29 +317,8 @@ void serialEvent(Serial port){
  if(inString != null) {
    inString = inString.trim();
    int value = int(inString);
-   realValue = map(value,810,1023,0, gameDif);
+   realValue = map(value,810,1023,0, 9);
    diameter += realValue;
    println(value);
- 
  }
-}
-
-void playMusic(SoundFile startFile){
-    startFile.play();
-}
-
-void stopMusic(SoundFile stopFile){
-   stopFile.stop();
-}
-
-void restart(){
-   diameter = 300;
-   goal = 900;
-   fail = 10;
-   isRunning = true;
-   playMusicOnce = true;
-   loseCheck = false;
-   winCheck = false;
-  background(0, 0, 0);
-   
 }
